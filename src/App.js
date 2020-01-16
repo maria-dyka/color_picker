@@ -1,24 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+
+import ColorPicker from './components/ColorPicker';
 
 function App() {
+  const [selectedColor, setSelectedColor] = useState('#FF0000');
+  const [colors, setColors] = useState(['#FF0000', '#BDFF00', '#4200FF', '#FFD800']);
+
+  const onChangeHandler = hexColor => {
+    if (colors.indexOf(hexColor.toUpperCase()) < 0) {
+      setColors(colors.concat([hexColor.toUpperCase()]));
+    }
+    setSelectedColor(hexColor.toUpperCase());
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ColorPicker
+        colors={colors}
+        onChange={onChangeHandler}
+        value={selectedColor}
+        />
     </div>
   );
 }
