@@ -11,20 +11,20 @@ $ npm install
 ## Available Scripts
 Run them in the project derictory.
 
-### `To start an app:`
+### To start an app:
 ```
 $ npm start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-### `To run tests:`
+### To run tests:
 ```
 $ npm run test
 ```
 
 
-### `To create a prodaction version:`
+### To create a prodaction version:
 ```
 $ npm run build
 ```
