@@ -69,12 +69,12 @@ const HexSelect = props => {
  
     return (
         <FormControl className={styles.wrapper}>
-            <DropdownButton disableRipple={true} onClick={toggleMenu}>
+            <DropdownButton data-testid="toggle-button" disableRipple={true} onClick={toggleMenu}>
                 <ArrowDropDownIcon className={openedMenu? styles.opened: ''}/>
             </DropdownButton>
             {openedMenu ? (
                 <ClickAwayListener onClickAway={toggleMenu}>
-                    <div className={styles.dropdown}>
+                    <div data-testid='dropdown' className={styles.dropdown}>
                         <Paper elevation={5} className={styles.arrow}></Paper>
                         <Paper elevation={5} className={styles.menu}>
                             {props.colors.map(color =>
