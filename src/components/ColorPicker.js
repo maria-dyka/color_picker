@@ -5,40 +5,52 @@ import InputBase from '@material-ui/core/InputBase';
 import HexSelect from './HexSelect';
 import RgbSelect from './RgbSelect';
 
-const CustomInput = withStyles({
+const CustomInput = withStyles(theme => ({
     input: {
-        width: '150px',
-        height: '44px',
+        width: theme.spacing(3),
+        height: theme.spacing(.9),
+        backgroundColor: 'white',
         padding: '0 0 0 12px',
-        border: '1px solid lightgrey',
+        border: `1px solid ${theme.palette.secondary.light}`,
         '&:focus': {
-            border: '1px solid #80bdff',
-            backgroundColor: 'white'
+            border: `1px solid ${theme.palette.secondary.dark}`,
         },
     },
-  })(InputBase);
+  }))(InputBase);
 
-const useStyles = makeStyles({
-    root: {
+const useStyles = makeStyles(theme => ({
+    container: {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    colorPicker: {
         position: 'relative',
         display: 'flex',
-        width: 'max-content'
+        width: 'max-content',
+        alignItems: 'center'
+    },
+    label: {
+        fontSize: '20px',
+        color: theme.palette.secondary.dark
     }
-})
+}))
 
 const ColorPicker = props => {
     const styles = useStyles();
 
     return (
-        <div className={styles.root}>
+        <div className={styles.container}>
+        <p className={styles.label} role="heading">Choose your color: </p>
+        <div className={styles.colorPicker}>
             <CustomInput value={props.value} readOnly/>
-            <RgbSelect 
+            <RgbSelect
                 value={props.value}
                 onChange={props.onChange}/>
             <HexSelect 
                 value={props.value}
                 colors={props.colors}
                 onChange={props.onChange}/>
+        </div>
         </div>
     )
 }

@@ -1,39 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import Button from '@material-ui/core/Button';
-import Slider from '@material-ui/core/Slider';
+import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import { convertHexToRGB, convertRGBtoHex } from '../utils';
 import CustomListItem from './CustomListItem';
+import CustomButton from './CustomButton';
+import CustomRGBSlider from './CustomRGBSlider';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     colorWrapper: {
         cursor: 'pointer',
         width: 'fit-content',
-        border: 'solid 1px lightgrey',
+        border: `1px solid ${theme.palette.secondary.light}`,
+        outline: 0,
         '&:focus': {
-            border: '1px solid #80bdff'
+            border: `1px solid ${theme.palette.secondary.dark}`
         },
     },
     colorPreview: {
-        width: '25px',
-        height: '20px',
-        margin: '12px',
+        width: theme.spacing(.51),
+        height: theme.spacing(.4),
+        margin: theme.spacing(.25),
+    },
+    dropdown: {
+        position: 'absolute',
+        top: theme.spacing(1) + 1,
+        right: 0,
     },
     menu: {
-        position: 'absolute',
-        top: '50px',
-        right: 0,
-        width: '200px',
+        width: 200,
         padding: '20px'
+    },
+    arrow: {
+        width: theme.spacing(.51),
+        height: theme.spacing(.25),
+        clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+        position: 'relative',
+        left: 200 - theme.spacing(1),
     },
     buttonsContainer: {
         display: 'flex',
         justifyContent: 'flex-end'
     }
-})
+}))
 
 const RgbSelect = props => {
     const [rgbValues, setRGBvales] = useState({});
@@ -46,7 +56,7 @@ const RgbSelect = props => {
         setRGBvales(rgbColor);
     }, [props.value])
 
-    const changeColorHandler = (e, newValue, color) => {
+    const changeColorHandler = useCallback((newValue, color) => {
         switch (color) {
             case 'r': 
                 setRGBvales(prevRGB => ({...prevRGB, r: newValue}));
@@ -57,76 +67,71 @@ const RgbSelect = props => {
             case 'b':
                 setRGBvales(prevRGB => ({...prevRGB, b: newValue}));
                 break;
+            default:
+                setRGBvales(prevRGB => ({...prevRGB}))
         }
-    }
+    }, [setRGBvales])
 
-    const cancelHandler = () => {
+    const cancelHandler = useCallback(() => {
         const rgbColor = convertHexToRGB(props.value);
         setOpenedMenu(false);
         setRGBvales(rgbColor);
-    }
+    }, [props.value])
 
-    const submitHandler = () => {
+    const submitHandler = useCallback(() => {
         const hexColor = convertRGBtoHex(rgbValues);
         setOpenedMenu(false);
         props.onChange(hexColor);
-    }
-
-    const onClickAwayHandler = () => {
-        setOpenedMenu(false)
-    }
+    }, [props, rgbValues])
 
     return (
         <div className={styles.wrapper}>
-                <Paper 
-                    className={styles.colorWrapper}
-                    variant="outlined"
+            <Paper 
+                className={styles.colorWrapper}
+                variant="outlined"
+                square
+                role="button"
+                aria-haspopup="listbox"
+                tabIndex="0"
+                onKeyPress={e => e.key === 'Enter'? setOpenedMenu(prev => !prev): null}
+                onClick={() => setOpenedMenu(prev => !prev)}>
+                <Paper
+                    elevation={0}
                     square
-                    role="button"
-                    aria-haspopup="listbox"
-                    tabIndex="0"
-                    aria-labelledby="input-select"
-                    onKeyPress={e => e.key === 'Enter'? setOpenedMenu(prev => !prev): null}
-                    onClick={() => setOpenedMenu(prev => !prev)}>
-                    <Paper
-                        elevation={0}
-                        square
-                        className={styles.colorPreview}
-                        style={{backgroundColor: `rgb(${rgbValues.r}, ${rgbValues.g}, ${rgbValues.b})`}}/>
-                </Paper>
-                {openedMenu ? (
-                    <ClickAwayListener onClickAway={onClickAwayHandler}>
-                    <Paper elevation={5} className={styles.menu}>
-                        <CustomListItem label="R">
-                            <Slider
-                                defaultValue={rgbValues.r}
-                                step={1} min={0} max={255}
-                                onClick={e => e.preventDefault()}
-                                onChange={(e, newValue) => changeColorHandler(e, newValue, 'r')}/>
-                        </CustomListItem>
-                        <CustomListItem label="G">
-                            <Slider
-                                defaultValue={rgbValues.g}
-                                step={1}
-                                min={0}
-                                max={255}
-                                onChange={(e, newValue) => changeColorHandler(e, newValue, 'g')}/>
-                        </CustomListItem>
-                        <CustomListItem label="B">
-                            <Slider
-                                defaultValue={rgbValues.g}
-                                step={1}
-                                min={0}
-                                max={255}
-                                onChange={(e, newValue) => changeColorHandler(e, newValue, 'b')}/>
-                        </CustomListItem>
-                        <div className={styles.buttonsContainer}>
-                            <Button onClick={cancelHandler}>Cancel</Button>
-                            <Button onClick={submitHandler}>OK</Button>
-                        </div>
-                    </Paper>
-                    </ClickAwayListener>
-                ): null}
+                    className={styles.colorPreview}
+                    style={{backgroundColor: `rgb(${rgbValues.r}, ${rgbValues.g}, ${rgbValues.b})`}}/>
+            </Paper>
+            {openedMenu ? (
+                <ClickAwayListener onClickAway={cancelHandler}>
+                    <div className={styles.dropdown}>
+                        <Paper elevation={5} className={styles.arrow}></Paper>
+                        <Paper elevation={5} className={styles.menu}>
+                            <CustomListItem label="R">
+                                <CustomRGBSlider
+                                    variant="red"
+                                    value={rgbValues.r}
+                                    onChange={changeColorHandler}/>
+                            </CustomListItem>
+                            <CustomListItem label="G">
+                                <CustomRGBSlider
+                                    variant="green"
+                                    value={rgbValues.g}
+                                    onChange={changeColorHandler}/>
+                            </CustomListItem>
+                            <CustomListItem label="B">
+                                <CustomRGBSlider
+                                    variant="blue"
+                                    value={rgbValues.b}
+                                    onChange={changeColorHandler}/>
+                            </CustomListItem>
+                            <div className={styles.buttonsContainer}>
+                                <CustomButton variant="regular" onClick={cancelHandler}>Cancel</CustomButton>
+                                <CustomButton variant="submit" onClick={submitHandler}>OK</CustomButton>
+                            </div>
+                        </Paper>
+                    </div>
+                </ClickAwayListener>
+            ): null}
         </div>
     )
 }

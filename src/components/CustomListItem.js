@@ -4,7 +4,7 @@ import Typografy from '@material-ui/core/Typography';
 
 const CustomListItem = props => {
     return (
-        <Grid container spacing={2} alignItems="center">
+        <Grid container spacing={1} alignItems="center">
             <Grid item>
                 <Typografy>{props.label}</Typografy>
             </Grid>
