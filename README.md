@@ -3,7 +3,7 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Clone this repository and istall dependencies:
+### To install dependencies:
 ```
 $ npm install
 ```
